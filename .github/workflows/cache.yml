@@ -7,16 +7,35 @@ jobs:
   test-cache:
     name: job to test the cache
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4.2.2
-      - uses: actions/cache@v4
+      - name: Checkout code
+        uses: actions/checkout@v4.2.2
+
+      - name: Set up Python 3.10 (recommended for lalsuite)
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install system dependencies for lalsuite
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgsl-dev libfftw3-dev libmetaio-dev libframe-dev libcurl4-openssl-dev
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
         id: generateCache
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
-      - run: pip install -r requirements.txt
-      - name: confirm cache
+
+      - name: Install Python requirements
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -r requirements.txt
+
+      - name: Confirm cache hit
         if: steps.generateCache.outputs.cache-hit == 'true'
-        run: echo cache entry found!
+        run: echo "Cache entry found!"
