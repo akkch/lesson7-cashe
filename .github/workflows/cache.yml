@@ -20,7 +20,8 @@ jobs:
       - name: Install system dependencies for lalsuite
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgsl-dev libfftw3-dev libmetaio-dev libframe-dev libcurl4-openssl-dev
+          sudo apt-get install -y libgsl-dev libfftw3-dev libframe-dev libcurl4-openssl-dev
+
 
       - name: Cache pip packages
         uses: actions/cache@v4
